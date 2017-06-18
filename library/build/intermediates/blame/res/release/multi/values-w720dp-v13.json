@@ -1,0 +1,26 @@
+[
+    {
+        "outputFile": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/incremental/mergeReleaseResources/merged.dir/values-w720dp-v13/values-w720dp-v13.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 76,
+                    "endOffset": 127
+                },
+                "from": {
+                    "file": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/values-w720dp/values-w720dp.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 293,
+                        "endColumn": 76,
+                        "endOffset": 365
+                    }
+                }
+            }
+        ]
+    }
+]

@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_slide_in_top.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_slide_in_top.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_slide_out_top.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_slide_out_top.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_popup_exit.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_popup_exit.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_slide_out_bottom.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_slide_out_bottom.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_shrink_fade_out_from_bottom.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_shrink_fade_out_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_fade_in.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_fade_in.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_grow_fade_in_from_bottom.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_grow_fade_in_from_bottom.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_fade_out.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_fade_out.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_popup_enter.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_popup_enter.xml"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/anim/abc_slide_in_bottom.xml",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/anim/abc_slide_in_bottom.xml"
+    }
+]

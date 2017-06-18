@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/online_music"
+            android:icon="@mipmap/ic_launcher"
+            android:title="在线歌曲"></item>
+        <item
+            android:id="@+id/local_music"
+            android:icon="@mipmap/ic_launcher"
+            android:title="本地歌曲"></item>
+        <item
+            android:id="@+id/about"
+            android:icon="@mipmap/ic_launcher"
+            android:title="关于"></item>
+    </group>
+</menu>

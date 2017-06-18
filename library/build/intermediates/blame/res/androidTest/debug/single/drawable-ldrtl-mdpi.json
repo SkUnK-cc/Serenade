@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-ldrtl-mdpi/abc_ic_ab_back_mtrl_am_alpha.png",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/drawable-ldrtl-mdpi/abc_ic_ab_back_mtrl_am_alpha.png"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-ldrtl-mdpi/abc_ic_menu_cut_mtrl_alpha.png",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/drawable-ldrtl-mdpi/abc_ic_menu_cut_mtrl_alpha.png"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-ldrtl-mdpi/abc_ic_menu_copy_mtrl_am_alpha.png",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/drawable-ldrtl-mdpi/abc_ic_menu_copy_mtrl_am_alpha.png"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-ldrtl-mdpi/abc_spinner_mtrl_am_alpha.9.png",
+        "source": "/Users/Serenade/.android/build-cache/6b50544c2e54ce66c68e83a871d41aed74439983/output/res/drawable-ldrtl-mdpi/abc_spinner_mtrl_am_alpha.9.png"
+    }
+]

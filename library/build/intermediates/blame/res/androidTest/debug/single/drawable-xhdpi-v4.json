@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/shadow_left.png",
+        "source": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/shadow_left.png"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/shadow_bottom.png",
+        "source": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/shadow_bottom.png"
+    },
+    {
+        "merged": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/res/merged/androidTest/debug/drawable-xhdpi-v4/shadow_right.png",
+        "source": "/Users/Serenade/Workspace/Serenade/library/build/intermediates/bundles/debug/res/drawable-xhdpi-v4/shadow_right.png"
+    }
+]
