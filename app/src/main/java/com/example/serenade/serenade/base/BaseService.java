@@ -17,13 +17,15 @@ public class BaseService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        EventBus.getDefault().register(this);
+        if (registerEventBus())
+            EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        if (registerEventBus())
+            EventBus.getDefault().unregister(this);
     }
 
     @Subscribe
@@ -48,4 +50,12 @@ public class BaseService extends Service {
     }
 
 
+    /**
+     * 是否注册EventBus
+     *
+     * @return true 注册 false 不注册
+     */
+    public boolean registerEventBus() {
+        return false;
+    }
 }

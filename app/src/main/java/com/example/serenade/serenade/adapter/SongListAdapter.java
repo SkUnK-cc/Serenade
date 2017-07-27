@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.example.serenade.serenade.R;
 import com.example.serenade.serenade.bean.Song;
+import com.example.serenade.serenade.callback.OnItemClickListener;
 
 import java.util.List;
 

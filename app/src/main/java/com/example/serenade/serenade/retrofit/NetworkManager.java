@@ -66,4 +66,14 @@ public class NetworkManager {
         }
     }
 
+    public void removeRequest(String className, Call call) {
+        if (mCalls == null)
+            return;
+
+        if (mCalls.containsKey(className)) {
+            List<Call> callList = mCalls.get(className);
+            callList.remove(call);
+        }
+    }
+
 }

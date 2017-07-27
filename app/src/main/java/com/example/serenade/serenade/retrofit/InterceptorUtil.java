@@ -42,8 +42,8 @@ public class InterceptorUtil {
                         .newBuilder()
                         .scheme(oldRequest.url().scheme())
                         .host(oldRequest.url().host())
-                        .addQueryParameter("showapi_appid", Constants.APP_ID)
-                        .addQueryParameter("showapi_sign", Constants.SIGN);
+                        .addQueryParameter("showapi_appid", Constants.YY_APP_ID)
+                        .addQueryParameter("showapi_sign", Constants.YY_SIGN);
                 // 新的请求
                 Request newRequest = oldRequest.newBuilder()
                         .method(oldRequest.method(), oldRequest.body())

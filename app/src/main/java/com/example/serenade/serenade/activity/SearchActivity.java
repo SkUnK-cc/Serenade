@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.serenade.serenade.R;
-import com.example.serenade.serenade.adapter.OnItemClickListener;
+import com.example.serenade.serenade.callback.OnItemClickListener;
 import com.example.serenade.serenade.adapter.SongListAdapter;
 import com.example.serenade.serenade.base.BaseActivity;
 import com.example.serenade.serenade.bean.Song;

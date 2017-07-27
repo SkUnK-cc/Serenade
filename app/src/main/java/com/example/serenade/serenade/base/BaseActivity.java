@@ -40,11 +40,13 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private Unbinder mBind;
     View mRootView;
     protected Toolbar mToolbar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //注册EventBus
-        EventBus.getDefault().register(this);
+        //注册EventBus,默认不注册
+        if (registerEventBus())
+            EventBus.getDefault().register(this);
         //取消ActionBar
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         //设置界面随键盘弹出自动上移
@@ -62,6 +64,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         initEvent();
         //初始化
         init();
+    }
+
+    /**
+     * 是否注册EventBus
+     *
+     * @return true 注册 false 不注册
+     */
+    public boolean registerEventBus() {
+        return false;
     }
 
     /**
@@ -98,7 +109,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onDestroy() {
         super.onDestroy();
         mBind.unbind();//解除ButterKnife绑定
-        EventBus.getDefault().unregister(this);//解除EventBus注册
+        if (registerEventBus())
+            EventBus.getDefault().unregister(this);//解除EventBus注册
         //从管理堆栈移除Activity
         AppManager.getInstance().finishActivity(this);
         //如果不是MVP模式，则取消记录的网络请求
@@ -301,22 +313,22 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     /**
      * 添加背景ImageView
+     *
      * @param activity
      */
-    private void addBackgroundImageView(Activity activity){
+    private void addBackgroundImageView(Activity activity) {
         ViewGroup contentLayout = (ViewGroup) findViewById(android.R.id.content);
         ImageView background = new ImageView(activity);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         background.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        contentLayout.addView(background,0, lp);
+        contentLayout.addView(background, 0, lp);
     }
 
-    public ImageView getBackgroundImageView(Activity activity){
+    public ImageView getBackgroundImageView(Activity activity) {
         ViewGroup contentLayout = (ViewGroup) findViewById(android.R.id.content);
         ImageView background = (ImageView) contentLayout.getChildAt(0);
         return background;
     }
-
 
 
     /**

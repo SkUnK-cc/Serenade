@@ -15,6 +15,7 @@ import retrofit2.Response;
 public class BaseCall<T> implements Call<T> {
     public final Call<T> mCall;
     private MainThreadExecutor mExecutor;
+    private String clzName;
 
     public BaseCall(Call<T> call) {
         this.mCall = call;
@@ -23,7 +24,11 @@ public class BaseCall<T> implements Call<T> {
 
     @Override
     public Response<T> execute() throws IOException {
-        return mCall.execute();
+        Response<T> response = mCall.execute();
+        if (clzName!=null){
+            NetworkManager.getInstance().removeRequest(clzName,mCall);
+        }
+        return response;
     }
 
     /**
@@ -41,6 +46,9 @@ public class BaseCall<T> implements Call<T> {
                 mExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
+                        if (clzName!=null){
+                            NetworkManager.getInstance().removeRequest(clzName,mCall);
+                        }
                         callback.onResponse(BaseCall.this, response);
                     }
                 });
@@ -51,6 +59,9 @@ public class BaseCall<T> implements Call<T> {
                 mExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
+                        if (clzName!=null){
+                            NetworkManager.getInstance().removeRequest(clzName,mCall);
+                        }
                         callback.onFailure(BaseCall.this, t);
                     }
                 });
@@ -59,8 +70,8 @@ public class BaseCall<T> implements Call<T> {
     }
 
     public BaseCall<T> record(Class clz) {
-        String name = clz.getName();
-        NetworkManager.getInstance().recordRequest(name, mCall);
+        clzName = clz.getName();
+        NetworkManager.getInstance().recordRequest(clzName, mCall);
         return this;
     }
 
@@ -71,6 +82,9 @@ public class BaseCall<T> implements Call<T> {
 
     @Override
     public void cancel() {
+        if (clzName!=null){
+            NetworkManager.getInstance().removeRequest(clzName,mCall);
+        }
         mCall.cancel();
     }
 
@@ -80,8 +94,8 @@ public class BaseCall<T> implements Call<T> {
     }
 
     @Override
-    public Call clone() {
-        return mCall.clone();
+    public BaseCall clone() {
+        return new BaseCall(mCall.clone());
     }
 
     @Override

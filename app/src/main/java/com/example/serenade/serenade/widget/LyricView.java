@@ -406,6 +406,13 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
         return millisecond + second * 1000 + minute * 60 * 1000;
     }
 
+    /**
+     * LyricView是否已经开始
+     * @return  true 已开始 false 未开始
+     */
+    public boolean isStarted(){
+        return mHandler.hasMessages(REFRESH);
+    }
 
     /**
      * 判断当前时间所属行,使用二分查找减少计算时间

@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import com.example.serenade.serenade.application.MyApplication;
 import com.example.serenade.serenade.base.EventCenter;
 import com.example.serenade.serenade.bean.Song;
+import com.example.serenade.serenade.callback.OnPlayStateListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,6 +24,7 @@ import io.realm.RealmResults;
 public class PlayService extends Service {
     private MediaPlayer mPlayer;
     private Song song;
+    private OnPlayStateListener mOnPlayStateListener;
 
     @Nullable
     @Override
@@ -33,7 +35,6 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -97,8 +98,9 @@ public class PlayService extends Service {
     }
 
     public void pausePlay() {
-        if (mPlayer != null && mPlayer.isPlaying())
+        if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayer.pause();
+        }
     }
 
     public boolean isPlaying() {
@@ -129,6 +131,8 @@ public class PlayService extends Service {
                         recent.commitTransaction();
                     }
                     mp.start();
+                    if (mOnPlayStateListener != null)
+                        mOnPlayStateListener.onStart();
                 }
             });
             mPlayer.prepare();
@@ -147,5 +151,13 @@ public class PlayService extends Service {
         public PlayService getService() {
             return PlayService.this;
         }
+    }
+
+    public void setOnPlayStateListener(OnPlayStateListener listener) {
+        this.mOnPlayStateListener = listener;
+    }
+
+    public OnPlayStateListener getOnPlayStateListener() {
+        return mOnPlayStateListener;
     }
 }

@@ -26,7 +26,7 @@ import static android.content.Context.INPUT_METHOD_SERVICE;
 /**
  * Created by admin on 2016/11/1.
  */
-public abstract class BaseFragment extends Fragment implements View.OnClickListener{
+public abstract class BaseFragment extends Fragment implements View.OnClickListener {
 
     protected View mRootView;
     protected Activity mActivity;
@@ -41,11 +41,21 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRootView = inflater.inflate(setLayout(), container, false);
         mUnbinder = ButterKnife.bind(this, mRootView);
-        EventBus.getDefault().register(this);
+        if (registerEventBus())
+            EventBus.getDefault().register(this);
         mActivity = getActivity();
         initEvent();
         init();
         return mRootView;
+    }
+
+    /**
+     * 是否注册EventBus
+     *
+     * @return true 注册 false 不注册
+     */
+    public boolean registerEventBus() {
+        return false;
     }
 
     /**
@@ -101,7 +111,8 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     public void onDestroy() {
         mActivity = null;
         mUnbinder.unbind();
-        EventBus.getDefault().unregister(this);
+        if (registerEventBus())
+            EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 

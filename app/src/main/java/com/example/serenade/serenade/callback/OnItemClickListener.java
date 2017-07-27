@@ -1,4 +1,4 @@
-package com.example.serenade.serenade.adapter;
+package com.example.serenade.serenade.callback;
 
 import android.view.View;
 

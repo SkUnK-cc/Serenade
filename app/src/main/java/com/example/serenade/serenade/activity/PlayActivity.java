@@ -22,6 +22,7 @@ import com.example.serenade.serenade.application.MyApplication;
 import com.example.serenade.serenade.base.BaseActivity;
 import com.example.serenade.serenade.bean.Lyric;
 import com.example.serenade.serenade.bean.Song;
+import com.example.serenade.serenade.callback.OnPlayStateListener;
 import com.example.serenade.serenade.retrofit.BaseCall;
 import com.example.serenade.serenade.retrofit.BaseResponse;
 import com.example.serenade.serenade.retrofit.RetrofitHelper;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Random;
 
 import butterknife.BindView;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
@@ -180,6 +182,31 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         showToast("点击了分享");
+        OnekeyShare oks = new OnekeyShare();
+        //关闭sso授权
+        oks.disableSSOWhenAuthorize();
+
+        // 分享时Notification的图标和文字  2.5.9以后的版本不     调用此方法
+        //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
+        // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
+        oks.setTitle("我正在Serenade听"+"\""+playService.getSongInfo().getAlbumname()+"\"");
+        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
+        oks.setTitleUrl(playService.getSongInfo().getM4a());
+        // text是分享文本，所有平台都需要这个字段
+        oks.setText("我正在Serenade听"+"\""+playService.getSongInfo().getAlbumname()+"\"");
+        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
+        oks.setImagePath("file:///android_asset/app_icon.png");//确保SDcard下面存在此张图片
+        // url仅在微信（包括好友和朋友圈）中使用
+        oks.setUrl(playService.getSongInfo().getM4a());
+        // comment是我对这条分享的评论，仅在人人网和QQ空间使用
+        oks.setComment("我是测试评论文本");
+        // site是分享此内容的网站名称，仅在QQ空间使用
+        oks.setSite(getString(R.string.app_name));
+        // siteUrl是分享此内容的网站地址，仅在QQ空间使用
+        oks.setSiteUrl(playService.getSongInfo().getM4a());
+
+        // 启动分享GUI
+        oks.show(this);
         return true;
     }
 
@@ -236,9 +263,8 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
             playService = binder.getService();
             Song songInfo = playService.getSongInfo();
             int duration = playService.getDuration();
-            int currentPosition = playService.getCurrentPosition();
+            final int currentPosition = playService.getCurrentPosition();
             lyricView.setDuration(duration);
-            lyricView.setCurrentPosition(currentPosition);
             progress.setMax(duration);
             progress.setProgress(currentPosition);
             singer.setText(songInfo.getSingername());
@@ -247,10 +273,16 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
             total.setText(tot);
             String cur = TimeParseUtil.parse(currentPosition);
             current.setText(cur);
-            if (playService.isPlaying())
-                startOrPause.setImageResource(R.mipmap.pause);
-            else
-                startOrPause.setImageResource(R.mipmap.play);
+
+            playService.setOnPlayStateListener(new OnPlayStateListener() {
+                @Override
+                public void onStart() {
+                    startOrPause.setImageResource(R.mipmap.pause);
+                    if (!lyricView.isStarted())
+                        lyricView.start();
+                }
+            });
+
             Glide.with(PlayActivity.this).load(songInfo.getAlbumpic_big()).dontAnimate().into(getBackgroundImageView(PlayActivity.this));
             BaseCall<BaseResponse<Lyric>> call = RetrofitHelper.getApi().queryLyric(songInfo.getSongid() + "");
             call.record(PlayActivity.class).enqueue(new Callback<BaseResponse<Lyric>>() {
@@ -262,7 +294,15 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
                     lyric = lyric.replace("&apos;", "'");
                     lyric = lyric.replace("[", "\n\t[");
                     lyricView.setLyric(lyric);
-                    lyricView.start();
+                    lyricView.setCurrentPosition(currentPosition);
+                    if (playService.isPlaying()) {
+                        startOrPause.setImageResource(R.mipmap.pause);
+                        if (!lyricView.isStarted())
+                            lyricView.start();
+                    } else {
+                        startOrPause.setImageResource(R.mipmap.play);
+                        lyricView.stop();
+                    }
                 }
 
                 @Override
