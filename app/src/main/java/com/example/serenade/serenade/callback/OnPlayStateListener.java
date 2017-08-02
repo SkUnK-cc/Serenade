@@ -6,4 +6,5 @@ package com.example.serenade.serenade.callback;
 
 public interface OnPlayStateListener {
     void onStart();
+    void onPause();
 }

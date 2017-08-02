@@ -1,9 +1,9 @@
 package com.example.serenade.serenade.retrofit;
 
 import com.example.serenade.serenade.bean.Lyric;
+import com.example.serenade.serenade.bean.Recommend;
 import com.example.serenade.serenade.bean.SongBean;
 
-import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
@@ -19,7 +19,7 @@ public interface RetrofitApi {
     @GET("213-1")
     BaseCall<BaseResponse<SongBean>> querySong(@Query("keyword") String musicName);
 
-    @GET("213-1")
-    Observable<BaseResponse<SongBean>> get(@Query("keyword") String musicName);
 
+    @GET("213-4")
+    BaseCall<BaseResponse<Recommend>> getRecommendList(@Query("topid") String topId);
 }

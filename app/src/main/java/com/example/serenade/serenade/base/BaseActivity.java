@@ -289,7 +289,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         setTranslucentStatus();
         ViewGroup contentLayout = (ViewGroup) findViewById(android.R.id.content);
         setupStatusBarView(this, contentLayout, color);
-        View contentView = contentLayout.getChildAt(1);
+        View contentView = contentLayout.getChildAt(2);
         //如果是DrawerLayout,让内部第一个布局设置padding
         if (contentView instanceof DrawerLayout)
             contentView = ((DrawerLayout) contentView).getChildAt(0);
@@ -307,7 +307,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     private void setupStatusBarView(Activity activity, ViewGroup contentLayout, int color) {
         View statusBarView = new View(activity);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getStatusBarHeight());
-        contentLayout.addView(statusBarView, lp);
+        contentLayout.addView(statusBarView,0, lp);
         statusBarView.setBackgroundColor(color);
     }
 
@@ -326,7 +326,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     public ImageView getBackgroundImageView(Activity activity) {
         ViewGroup contentLayout = (ViewGroup) findViewById(android.R.id.content);
-        ImageView background = (ImageView) contentLayout.getChildAt(0);
+        ImageView background = (ImageView) contentLayout.getChildAt(1);
         return background;
     }
 

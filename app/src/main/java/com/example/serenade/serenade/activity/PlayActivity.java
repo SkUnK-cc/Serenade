@@ -6,11 +6,14 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -18,18 +21,21 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.serenade.serenade.R;
+import com.example.serenade.serenade.adapter.PlayListAdapter;
 import com.example.serenade.serenade.application.MyApplication;
 import com.example.serenade.serenade.base.BaseActivity;
 import com.example.serenade.serenade.bean.Lyric;
 import com.example.serenade.serenade.bean.Song;
+import com.example.serenade.serenade.callback.OnItemClickListener;
 import com.example.serenade.serenade.callback.OnPlayStateListener;
+import com.example.serenade.serenade.dialog.PlayListDialog;
+import com.example.serenade.serenade.itemdecoration.RecyclerViewDivider;
 import com.example.serenade.serenade.retrofit.BaseCall;
 import com.example.serenade.serenade.retrofit.BaseResponse;
 import com.example.serenade.serenade.retrofit.RetrofitHelper;
 import com.example.serenade.serenade.service.PlayService;
 import com.example.serenade.serenade.utils.TimeParseUtil;
 import com.example.serenade.serenade.widget.LyricView;
-import com.example.serenade.serenade.window.RecentPlayListWindow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +51,7 @@ import retrofit2.Response;
 
 import static com.example.serenade.serenade.R.mipmap.play;
 
-public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClickListener, LyricView.IndicatorListener, SeekBar.OnSeekBarChangeListener, LyricView.OnProgressChangedListener, AdapterView.OnItemClickListener {
+public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClickListener, LyricView.IndicatorListener, SeekBar.OnSeekBarChangeListener, LyricView.OnProgressChangedListener, OnItemClickListener {
     @BindView(R.id.startOrPause)
     ImageView startOrPause;
     @BindView(R.id.last)
@@ -70,15 +76,14 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
     TextView singer;
     @BindView(R.id.song)
     TextView song;
-    @BindView(R.id.background)
-    ImageView background;
     @BindView(R.id.controller)
     LinearLayout controller;
 
-    private PlayService playService;
+    private PlayService play_service;
     private PlayServiceConnection connection;
-    private RecentPlayListWindow window;
-    private List<Song> recentList;
+    private List<Song> play_list;
+    private PlayListDialog play_list_dialog;
+    private PlayListAdapter adapter;
 
     @Override
     public int setLayout() {
@@ -92,12 +97,7 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
         next.setOnClickListener(this);
         playMode.setOnClickListener(this);
         playList.setOnClickListener(this);
-        toolBar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        toolBar.setNavigationOnClickListener(this);
         toolBar.setOnMenuItemClickListener(this);
         lyricView.setOnIndicatorPlayListener(this);
         progress.setOnSeekBarChangeListener(this);
@@ -113,15 +113,29 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
         connection = new PlayServiceConnection();
         bindService(intent, connection, BIND_AUTO_CREATE);
 
-        recentList = new ArrayList<>();
-        window = new RecentPlayListWindow(this, recentList);
-        window.setOnItemClickListener(this);
+        play_list = new ArrayList<>();
+//        play_list_dialog = new BottomSheetDialog(this);
+        play_list_dialog = new PlayListDialog(this);
+        View play_list_content = LayoutInflater.from(this).inflate(R.layout.play_list, null);
+        RecyclerView recyclerView = (RecyclerView)play_list_content.findViewById(R.id.list) ;
+        ImageView close = (ImageView) play_list_content.findViewById(R.id.close);
+        close.setOnClickListener(this);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        adapter = new PlayListAdapter(this, play_list);
+        adapter.setOnItemClickListener(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new RecyclerViewDivider(false));
+        play_list_dialog.setContentView(play_list_content);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         unbindService(connection);
+        lyricView.setOnProgressChangedListener(null);
+        lyricView.setOnIndicatorPlayListener(null);
+        play_service.setOnPlayStateListener(null);
+        lyricView.stop();
+        super.onDestroy();
     }
 
     @Override
@@ -150,13 +164,13 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
                 showToast("点击了上一首");
                 break;
             case R.id.startOrPause:
-                if (playService.isPlaying()) {
-                    playService.pausePlay();
+                if (play_service.isPlaying()) {
+                    play_service.pausePlay();
                     lyricView.stop();
                     startOrPause.setImageResource(play);
                 } else {
-                    playService.startPlay();
-                    int currentPosition = playService.getCurrentPosition();
+                    play_service.startPlay();
+                    int currentPosition = play_service.getCurrentPosition();
                     lyricView.setCurrentPosition(currentPosition);
                     lyricView.start();
                     startOrPause.setImageResource(R.mipmap.pause);
@@ -166,44 +180,44 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
                 showToast("点击了下一首");
                 break;
             case R.id.playList:
-                Realm recent = MyApplication.getRecentListenRealm();
+                Realm recent = MyApplication.getPlayListRealm();
                 RealmResults<Song> all = recent.where(Song.class).findAll();
-                recentList.clear();
-                recentList.addAll(all);
-                window.initLocation();
-                if (!window.isShowing())
-                    window.showAsDropDown(controller, 0, -controller.getMeasuredHeight() - window.getHeight());
-                else
-                    window.dismiss();
+                play_list.clear();
+                play_list.addAll(all);
+                play_list_dialog.show();
                 break;
+            case R.id.close:
+                play_list_dialog.dismiss();
+                break;
+            default:
+                finish();
         }
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        showToast("点击了分享");
         OnekeyShare oks = new OnekeyShare();
         //关闭sso授权
         oks.disableSSOWhenAuthorize();
 
-        // 分享时Notification的图标和文字  2.5.9以后的版本不     调用此方法
+        // 分享时Notification的图标和文字  2.5.9以后的版本不调用此方法
         //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
         // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
-        oks.setTitle("我正在Serenade听"+"\""+playService.getSongInfo().getAlbumname()+"\"");
+        oks.setTitle("我正在Serenade听" + "《" + play_service.getSongInfo().getSongname() + "》");
         // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-        oks.setTitleUrl(playService.getSongInfo().getM4a());
+        oks.setTitleUrl(play_service.getSongInfo().getM4a());
         // text是分享文本，所有平台都需要这个字段
-        oks.setText("我正在Serenade听"+"\""+playService.getSongInfo().getAlbumname()+"\"");
-        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-        oks.setImagePath("file:///android_asset/app_icon.png");//确保SDcard下面存在此张图片
+        oks.setText("我正在Serenade听" + "《" + play_service.getSongInfo().getSongname() + "》");
+        // imageUrl是图片的地址，Linked-In以外的平台都支持此参数
+        oks.setImageUrl(play_service.getSongInfo().getAlbumpic_small());
         // url仅在微信（包括好友和朋友圈）中使用
-        oks.setUrl(playService.getSongInfo().getM4a());
+        oks.setUrl(play_service.getSongInfo().getM4a());
         // comment是我对这条分享的评论，仅在人人网和QQ空间使用
-        oks.setComment("我是测试评论文本");
+        oks.setComment(" ");
         // site是分享此内容的网站名称，仅在QQ空间使用
         oks.setSite(getString(R.string.app_name));
         // siteUrl是分享此内容的网站地址，仅在QQ空间使用
-        oks.setSiteUrl(playService.getSongInfo().getM4a());
+        oks.setSiteUrl(play_service.getSongInfo().getM4a());
 
         // 启动分享GUI
         oks.show(this);
@@ -212,8 +226,8 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
 
     @Override
     public void onPlayClick(int position) {
-        if (playService != null)
-            playService.seekTo(position);
+        if (play_service != null)
+            play_service.seekTo(position);
     }
 
     @Override
@@ -231,7 +245,7 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
         int progress = seekBar.getProgress();
         lyricView.setCurrentPosition(progress);
         lyricView.pauseProgressListener(false);
-        playService.seekTo(progress);
+        play_service.seekTo(progress);
     }
 
     @Override
@@ -242,66 +256,77 @@ public class PlayActivity extends BaseActivity implements Toolbar.OnMenuItemClic
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Song info = recentList.get(position);
-        Song temp = MyApplication.getRecentListenRealm().copyFromRealm(info);
+    public void onItemClick(View view, int position) {
+        Song info = play_list.get(position);
+        Song temp = MyApplication.getPlayListRealm().copyFromRealm(info);
 
         unbindService(connection);
-        lyricView.stop();
+        lyricView.stopAndClear();
         Bundle bundle = new Bundle();
         bundle.putSerializable("song", temp);
         startService(PlayService.class, bundle);
 
         Intent intent = new Intent(this, PlayService.class);
         bindService(intent, connection, BIND_AUTO_CREATE);
+        play_list_dialog.dismiss();
     }
 
     class PlayServiceConnection implements ServiceConnection {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             PlayService.PlayBinder binder = (PlayService.PlayBinder) service;
-            playService = binder.getService();
-            Song songInfo = playService.getSongInfo();
-            int duration = playService.getDuration();
-            final int currentPosition = playService.getCurrentPosition();
+            play_service = binder.getService();
+            Song songInfo = play_service.getSongInfo();
+            int duration = play_service.getDuration();
             lyricView.setDuration(duration);
             progress.setMax(duration);
-            progress.setProgress(currentPosition);
             singer.setText(songInfo.getSingername());
             song.setText(songInfo.getSongname());
             String tot = TimeParseUtil.parse(duration);
             total.setText(tot);
-            String cur = TimeParseUtil.parse(currentPosition);
-            current.setText(cur);
 
-            playService.setOnPlayStateListener(new OnPlayStateListener() {
+            play_service.setOnPlayStateListener(new OnPlayStateListener() {
                 @Override
                 public void onStart() {
                     startOrPause.setImageResource(R.mipmap.pause);
                     if (!lyricView.isStarted())
                         lyricView.start();
                 }
+
+                @Override
+                public void onPause() {
+                    startOrPause.setImageResource(R.mipmap.play);
+                    if (lyricView.isStarted())
+                        lyricView.stop();
+                }
             });
 
-            Glide.with(PlayActivity.this).load(songInfo.getAlbumpic_big()).dontAnimate().into(getBackgroundImageView(PlayActivity.this));
+            Glide.with(PlayActivity.this).load(songInfo.getAlbumpic_big()).dontAnimate().placeholder(getBackgroundImageView(PlayActivity.this).getDrawable()).into(getBackgroundImageView(PlayActivity.this));
             BaseCall<BaseResponse<Lyric>> call = RetrofitHelper.getApi().queryLyric(songInfo.getSongid() + "");
             call.record(PlayActivity.class).enqueue(new Callback<BaseResponse<Lyric>>() {
                 @Override
                 public void onResponse(Call<BaseResponse<Lyric>> call, Response<BaseResponse<Lyric>> response) {
                     BaseResponse<Lyric> body = response.body();
                     String lyric = body.data.getLyric();
-                    lyric = Html.fromHtml(lyric).toString();
-                    lyric = lyric.replace("&apos;", "'");
-                    lyric = lyric.replace("[", "\n\t[");
+                    if (!TextUtils.isEmpty(lyric)) {
+                        lyric = Html.fromHtml(lyric).toString();
+                        lyric = lyric.replace("&apos;", "'");
+                        lyric = lyric.replace("[", "\n\t[");
+                    }
                     lyricView.setLyric(lyric);
+                    int currentPosition = play_service.getCurrentPosition();
                     lyricView.setCurrentPosition(currentPosition);
-                    if (playService.isPlaying()) {
+                    progress.setProgress(currentPosition);
+                    String cur = TimeParseUtil.parse(currentPosition);
+                    current.setText(cur);
+                    if (play_service.isPlaying()) {
                         startOrPause.setImageResource(R.mipmap.pause);
                         if (!lyricView.isStarted())
                             lyricView.start();
                     } else {
                         startOrPause.setImageResource(R.mipmap.play);
-                        lyricView.stop();
+                        if (lyricView.isStarted())
+                            lyricView.stop();
                     }
                 }
 

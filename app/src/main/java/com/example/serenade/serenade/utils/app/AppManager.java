@@ -93,4 +93,10 @@ public class AppManager {
         return activity;
     }
 
+    /**
+     * 获取Activity栈
+     */
+    public Stack<Activity> getStack(){
+        return activities;
+    }
 }

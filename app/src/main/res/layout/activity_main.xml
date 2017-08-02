@@ -13,32 +13,111 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolBar"
-            app:navigationIcon="@mipmap/menu"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:navigationIcon="@mipmap/menu"></android.support.v7.widget.Toolbar>
+        <com.jcodecraeer.xrecyclerview.XRecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/recommend_list"
+            android:layout_height="match_parent">
 
-            <!--<EditText-->
-                <!--android:id="@+id/input"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:imeOptions="actionSearch"-->
-                <!--android:singleLine="true" />-->
-        </android.support.v7.widget.Toolbar>
+        </com.jcodecraeer.xrecyclerview.XRecyclerView>
 
-      <Button
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="跳转到播放界面"
-          android:id="@+id/gotoplay"/>
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/navigationView"
-        android:background="#0000FF"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="left|start"
-        app:headerLayout="@layout/header"
-        app:menu="@menu/navigation_item" />
+    android:id="@+id/navigationView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="left|start"
+    android:background="#5CACEE"
+    app:headerLayout="@layout/header"
+    app:insetForeground="@android:color/transparent"
+    app:menu="@menu/navigation_item" />
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="#5CACEE"-->
+        <!--android:gravity="center_horizontal"-->
+        <!--android:orientation="vertical"-->
+        <!--android:paddingTop="30dp">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/img"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:clickable="true"-->
+            <!--android:src="@mipmap/app_icon" />-->
+
+        <!--<TextView-->
+            <!--android:id="@+id/account"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:clickable="true"-->
+            <!--android:text="用户名"-->
+            <!--android:textSize="20sp" />-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:src="@mipmap/ic_launcher"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<View-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="match_parent" />-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:text="在线音乐"-->
+                <!--android:textSize="20sp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:src="@mipmap/ic_launcher"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<View-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="match_parent" />-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:text="本地音乐"-->
+                <!--android:textSize="20sp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</LinearLayout>-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:layout_marginTop="20dp"-->
+            <!--android:layout_height="wrap_content">-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:src="@mipmap/ic_launcher"-->
+                <!--android:layout_height="wrap_content" />-->
+            <!--<View-->
+                <!--android:layout_width="20dp"-->
+                <!--android:layout_height="match_parent" />-->
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:text="关于       "-->
+                <!--android:textSize="20sp"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:layout_height="wrap_content" />-->
+        <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
 </android.support.v4.widget.DrawerLayout>
 

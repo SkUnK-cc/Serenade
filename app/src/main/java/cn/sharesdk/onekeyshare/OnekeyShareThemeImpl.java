@@ -16,6 +16,7 @@ import android.graphics.Bitmap.CompressFormat;
 import android.os.Handler.Callback;
 import android.os.Message;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.mob.MobSDK;
 import com.mob.tools.utils.ResHelper;
@@ -322,17 +323,17 @@ public abstract class OnekeyShareThemeImpl implements PlatformActionListener, Ca
 	}
 
 	private void toast(final String resOrName) {
-//		UIHandler.sendEmptyMessage(0, new Callback() {
-//			public boolean handleMessage(Message msg) {
-//				int resId = ResHelper.getStringRes(context, resOrName);
-//				if (resId > 0) {
-//					Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
-//				} else {
-//					Toast.makeText(context, resOrName, Toast.LENGTH_SHORT).show();
-//				}
-//				return false;
-//			}
-//		});
+		UIHandler.sendEmptyMessage(0, new Callback() {
+			public boolean handleMessage(Message msg) {
+				int resId = ResHelper.getStringRes(context, resOrName);
+				if (resId > 0) {
+					Toast.makeText(context, resId, Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(context, resOrName, Toast.LENGTH_SHORT).show();
+				}
+				return false;
+			}
+		});
 	}
 
 	protected abstract void showPlatformPage(Context context);

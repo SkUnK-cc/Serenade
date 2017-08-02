@@ -139,11 +139,14 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
                         if (mOnProgressChangedListener != null && !isProgressListenerPaused)
                             mOnProgressChangedListener.OnProgressChanged(mCurrentPosition);
                         mCurrentPosition += mRefreshTime;
-                        measureCurrentLine();
-                        if (mNewLineIndex != mCurrentLineIndex && isChanged && !isDragging && mDragged == 0 && !isLongPressMode) {
-                            smoothScrollTo(mLines.get(mCurrentLineIndex).getMiddle(), mLines.get(mNewLineIndex).getMiddle());
-                            isChanged = false;
+                        if (isLyricParsed) {
+                            measureCurrentLine();
+                            if (mNewLineIndex != mCurrentLineIndex && isChanged && !isDragging && mDragged == 0 && !isLongPressMode) {
+                                smoothScrollTo(mLines.get(mCurrentLineIndex).getMiddle(), mLines.get(mNewLineIndex).getMiddle());
+                                isChanged = false;
+                            }
                         }
+
                         if (mCurrentPosition <= mDuration)
                             sendEmptyMessageDelayed(REFRESH, mRefreshTime);
                         break;
@@ -285,20 +288,22 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
             mLyricInfo = parse_whole(lyric);
             mLines = mLyricInfo.getSong_lines();
             isLyricParsed = true;
-        } else
+        } else {
             mDefaultText = "暂无歌词";
+            isLyricParsed = false;
+        }
     }
 
     /**
      * 设置歌词文件，并且解析
      *
-     * @param lryric_file 歌词文件
+     * @param lyric_file 歌词文件
      */
-    public void setLyric(File lryric_file) {
+    public void setLyric(File lyric_file) {
         BufferedReader reader = null;
         StringBuilder lyric_builder = new StringBuilder();
         try {
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(lryric_file)));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(lyric_file)));
             String line = "";
             while ((line = reader.readLine()) != null) {
                 lyric_builder.append(line).append("/n");
@@ -408,9 +413,10 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
 
     /**
      * LyricView是否已经开始
-     * @return  true 已开始 false 未开始
+     *
+     * @return true 已开始 false 未开始
      */
-    public boolean isStarted(){
+    public boolean isStarted() {
         return mHandler.hasMessages(REFRESH);
     }
 
@@ -572,6 +578,7 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
      */
     public void start() {
         mHandler.sendEmptyMessage(REFRESH);
+        reDraw();
     }
 
     /**
@@ -579,6 +586,20 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
      */
     public void stop() {
         mHandler.removeCallbacksAndMessages(null);
+    }
+
+    /**
+     * 停止并清理数据
+     */
+    public void stopAndClear(){
+        stop();
+        mLyricInfo = null;
+        mLines =null;
+        isLyricParsed = false;
+        mDuration = 0;
+        mCurrentPosition = 0;
+        mDefaultText="歌词加载中...";
+        reDraw();
     }
 
     @Override
@@ -641,16 +662,16 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
         }
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        stop();
-    }
+//    @Override
+//    protected void onDetachedFromWindow() {
+//        super.onDetachedFromWindow();
+//        stop();
+//    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (mLines != null) {
+        if (isLyricParsed) {
             //设置指示器画笔
             setIndicatorPaint();
             //初始化指示器中心点坐标
@@ -748,15 +769,13 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
                     canvas.restore();
                 }
         } else {
-            mTextPaint.setColor(mPlayingLyricColor);
-            mPaint.setTextSize(mPlayingLyricSize);
+            setPlayingTextPaint();
             canvas.save();
             measureLine(mDefaultText);
             mDrawingStartY = (mViewHeight - mStaticLayout.getHeight()) / 2;
             canvas.translate(mIndicatorCenterX + mIndicatorRadius + mBrokenLineLeft, mDrawingStartY);
             mStaticLayout.draw(canvas);
             canvas.restore();
-            reDraw();
         }
     }
 
@@ -824,8 +843,10 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
 
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        mDragged += distanceY;
-        reDraw();
+        if (isLyricParsed) {
+            mDragged += distanceY;
+            reDraw();
+        }
         return false;
     }
 
@@ -855,65 +876,67 @@ public class LyricView extends View implements GestureDetector.OnGestureListener
 
     @Override
     public boolean onFling(final MotionEvent e1, MotionEvent e2, float velocityX, final float velocityY) {
-        mPartOfFling = velocityY / mSpeed;
-        mFlingAnimator = ValueAnimator.ofFloat(velocityY, 0);
-        mFlingAnimator.setDuration(1000);
-        mFlingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float value = (float) animation.getAnimatedValue();
-                //计算当前滚动值所占比例并动态改变滑动速度
-                if (velocityY > 0) {
-                    if (value <= mPartOfFling) {
-                        mSpeed = 1;
-                    } else if (mPartOfFling < value && value <= 2 * mPartOfFling) {
-                        mSpeed = 2;
-                    } else if (2 * mPartOfFling < value && value <= 3 * mPartOfFling) {
-                        mSpeed = 3;
-                    } else if (value > 3 * mPartOfFling) {
-                        mSpeed = 4;
-                    }
+        if (isLyricParsed) {
+            mPartOfFling = velocityY / mSpeed;
+            mFlingAnimator = ValueAnimator.ofFloat(velocityY, 0);
+            mFlingAnimator.setDuration(1000);
+            mFlingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float value = (float) animation.getAnimatedValue();
+                    //计算当前滚动值所占比例并动态改变滑动速度
+                    if (velocityY > 0) {
+                        if (value <= mPartOfFling) {
+                            mSpeed = 1;
+                        } else if (mPartOfFling < value && value <= 2 * mPartOfFling) {
+                            mSpeed = 2;
+                        } else if (2 * mPartOfFling < value && value <= 3 * mPartOfFling) {
+                            mSpeed = 3;
+                        } else if (value > 3 * mPartOfFling) {
+                            mSpeed = 4;
+                        }
 
-                    mDragged -= mSpeed;
-                } else {
-                    if (value >= mPartOfFling) {
-                        mSpeed = 1;
-                    } else if (mPartOfFling > value && value >= 2 * mPartOfFling) {
-                        mSpeed = 2;
-                    } else if (2 * mPartOfFling > value && value >= 3 * mPartOfFling) {
-                        mSpeed = 3;
-                    } else if (value < 3 * mPartOfFling) {
-                        mSpeed = 4;
-                    }
+                        mDragged -= mSpeed;
+                    } else {
+                        if (value >= mPartOfFling) {
+                            mSpeed = 1;
+                        } else if (mPartOfFling > value && value >= 2 * mPartOfFling) {
+                            mSpeed = 2;
+                        } else if (2 * mPartOfFling > value && value >= 3 * mPartOfFling) {
+                            mSpeed = 3;
+                        } else if (value < 3 * mPartOfFling) {
+                            mSpeed = 4;
+                        }
 
-                    mDragged += mSpeed;
+                        mDragged += mSpeed;
+                    }
+                    reDraw();
                 }
-                reDraw();
-            }
-        });
-        mFlingAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                //滑动结束后恢复默认速度
-                mSpeed = 4;
+            });
+            mFlingAnimator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    //滑动结束后恢复默认速度
+                    mSpeed = 4;
 //                reDraw();
 
-                //计算滑动后的位置属于第几行
-                measureDraggedLine();
-                //调整差值，使中心滑动到最近的一行的中心(此功能暂时取消)
+                    //计算滑动后的位置属于第几行
+                    measureDraggedLine();
+                    //调整差值，使中心滑动到最近的一行的中心(此功能暂时取消)
 //                dealWithOffset(mDraggedOffset, 0);
 
-                //拖动操作完成2秒后自动返回播放位置
-                mHandler.sendEmptyMessageDelayed(CLEAR_DRAGGED, mClearTime);
-            }
+                    //拖动操作完成2秒后自动返回播放位置
+                    mHandler.sendEmptyMessageDelayed(CLEAR_DRAGGED, mClearTime);
+                }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                //滑动取消后恢复默认速度
-                mSpeed = 4;
-            }
-        });
-        mFlingAnimator.start();
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                    //滑动取消后恢复默认速度
+                    mSpeed = 4;
+                }
+            });
+            mFlingAnimator.start();
+        }
         return false;
     }
     //----------------------------------------------------------------

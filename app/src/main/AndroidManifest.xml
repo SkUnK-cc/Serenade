@@ -3,8 +3,8 @@
     package="com.example.serenade.serenade">
 
     <!-- 添加必要的权限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--  Activity  -->
+        <!-- Activity -->
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,20 +32,22 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.PlayActivity"/>
-        <!--  Service  -->
+        <activity
+            android:name=".activity.PlayActivity"
+            android:launchMode="singleTask" />
+        <!-- Service -->
         <service android:name=".service.PlayService" />
-
 
         <activity
             android:name="com.mob.tools.MobUIShell"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <data android:scheme="tencent100371282" />
+
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -53,18 +55,25 @@
             <!-- 调用新浪原生SDK，需要注册的回调activity -->
             <intent-filter>
                 <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".wxapi.WXEntryActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!-- 填写您从Mob开发者后台中得到的Appkey和AppSecret -->
-        <meta-data android:name="Mob-AppKey" android:value="1a852f000bbb6"/>
-        <meta-data android:name="Mob-AppSecret" android:value="d524079614afc538ea4d1a809f985093"/>
+        <meta-data
+            android:name="Mob-AppKey"
+            android:value="1a852f000bbb6" />
+        <meta-data
+            android:name="Mob-AppSecret"
+            android:value="d524079614afc538ea4d1a809f985093" />
+
+        <activity android:name=".activity.LoginActivity"></activity>
     </application>
 
 </manifest>

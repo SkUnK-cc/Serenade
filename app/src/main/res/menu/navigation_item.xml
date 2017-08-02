@@ -4,14 +4,18 @@
         <item
             android:id="@+id/online_music"
             android:icon="@mipmap/ic_launcher"
-            android:title="在线歌曲"></item>
+            android:title="在线歌曲" />
         <item
             android:id="@+id/local_music"
             android:icon="@mipmap/ic_launcher"
-            android:title="本地歌曲"></item>
+            android:title="本地歌曲" />
+        <item
+            android:id="@+id/friends"
+            android:icon="@mipmap/ic_launcher"
+            android:title="好友" />
         <item
             android:id="@+id/about"
             android:icon="@mipmap/ic_launcher"
-            android:title="关于"></item>
+            android:title="关于" />
     </group>
 </menu>
